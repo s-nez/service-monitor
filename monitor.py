@@ -9,6 +9,11 @@ import yaml
 from Service import Service
 from Monitor import Monitor
 
+FIELDS_WITH_GLOBALS = [
+    'refresh_interval',   'refresh_timeout', 'flapping_protection_interval',
+    'notification_title', 'notification_text', 'label_ok', 'label_error'
+]
+
 def main():
     fh_services = open(argv[1])
     config = yaml.safe_load(fh_services)
@@ -16,10 +21,9 @@ def main():
 
     service_objects = []
     for service in config['services']:
-        if 'refresh_interval' not in service:
-            service['refresh_interval'] = config['refresh_interval']
-        if 'refresh_timeout' not in service:
-            service['refresh_timeout'] = config['refresh_timeout']
+        for field in FIELDS_WITH_GLOBALS:
+            if field not in service:
+                service[field] = config[field]
         service_objects.append(Service(**service))
 
     if len(config['services']) == 0:

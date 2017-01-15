@@ -61,7 +61,7 @@ class Monitor(Gtk.Window):
             if setting not in self._settings['background_rgba']:
                 self._settings['background_rgba'][setting] = value
 
-        print('Got settings:', str(self._settings))
+        #print('Got settings:', str(self._settings))
 
         self.setup()
         self.init_ui()

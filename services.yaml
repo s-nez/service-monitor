@@ -1,8 +1,9 @@
 font_name: Liberation Mono
 font_size: 14
 
-refresh_interval: 5
+refresh_interval: 1
 refresh_timeout: 10
+flapping_protection_interval: 60
 
 title:       Services
 label_ok:    Available
@@ -13,6 +14,9 @@ color_error: red
 window_gravity: bottom_right
 edge_x_offset: 10
 edge_y_offset: 50
+
+notification_title: Status change in %s
+notification_text:  The service is now %s
 
 background_rgba:
     red:   0.0
@@ -34,7 +38,6 @@ services:
     - name: Charon
       address: 127.0.0.1
       port: 5000  
-      refresh_interval: 15
 
     - name: DuckDuckGo
       address: duckduckgo.com
