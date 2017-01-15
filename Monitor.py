@@ -78,10 +78,11 @@ class Monitor(Gtk.Window):
         title_label.set_margin_bottom(15)
         grid.attach(title_label, 1, 0, 3, 1)
 
+        no_status_placeholder = (' ' * (self._max_len_status_label()-3)) + '...'
         for row, service in enumerate(self._services):
             row += FIXED_ROWS  # FIXME: hack
             name_label   = SimpleLabel(service.name, 'white', 0, font)
-            status_label = SimpleLabel('...', 'white', 1, font)
+            status_label = SimpleLabel(no_status_placeholder, 'white', 1, font)
 
             spinner = Gtk.Spinner()
             spinner.start()
