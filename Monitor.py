@@ -7,6 +7,13 @@ import math
 
 from SimpleLabel import SimpleLabel
 
+DEFAULT_BG_RGBA = {
+    'red':   0.0,
+    'green': 0.0,
+    'blue':  0.0,
+    'alpha': 0.9
+}
+
 DEFAULT_SETTINGS = {
     'window_gravity': 'bottom_right',
     'edge_x_offset': 10,
@@ -19,7 +26,9 @@ DEFAULT_SETTINGS = {
     'label_ok':    'available',
     'label_error': 'unavailable',
     'color_ok':    'green',
-    'color_error': 'red'
+    'color_error': 'red',
+
+    'background_rgba': DEFAULT_BG_RGBA
 }
 
 WINDOW_GRAVITIES = {
@@ -47,6 +56,10 @@ class Monitor(Gtk.Window):
             WINDOW_GRAVITIES[self._settings['window_gravity']]
         self._font_description = self._settings['font_name'] \
             + ' ' + str(self._settings['font_size'])
+
+        for setting, value in DEFAULT_BG_RGBA.items():
+            if setting not in self._settings['background_rgba']:
+                self._settings['background_rgba'][setting] = value
 
         print('Got settings:', str(self._settings))
 
@@ -120,7 +133,9 @@ class Monitor(Gtk.Window):
 
     def on_draw(self, wid, cr):
         cr.set_operator(cairo.OPERATOR_OUT) # don't draw over existing objects
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.9)
+        rgba = self._settings['background_rgba']
+        cr.set_source_rgba(
+                rgba['red'], rgba['green'], rgba['blue'], rgba['alpha'])
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
 
