@@ -1,0 +1,15 @@
+- name: Router admin panel
+  address: 192.168.0.1
+  port: 80
+
+- name: Something
+  address: 192.168.0.211
+  port: 80
+
+- name: Charon
+  address: 127.0.0.1
+  port: 5000  
+
+- name: DuckDuckGo
+  address: duckduckgo.com
+  port: 80
