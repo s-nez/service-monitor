@@ -93,6 +93,7 @@ class Monitor(Gtk.Window):
 
         no_status_placeholder = (' ' * (self._max_len_status_label()-3)) + '...'
         for row, service in enumerate(self._services):
+            service.name = service.name + '  ' # FIXME: implement spacing
             row += FIXED_ROWS  # FIXME: hack
             name_label   = SimpleLabel(service.name, 'white', 0, font)
             status_label = SimpleLabel(no_status_placeholder, 'white', 1, font)
