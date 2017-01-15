@@ -14,9 +14,7 @@ def main():
     services    = yaml.safe_load(fh_services)
     fh_services.close()
 
-    service_objects = map(
-            lambda x: Service(x['name'], x['address'], x['port']),
-            services)
+    service_objects = map( lambda x: Service(**x), services)
     app = Monitor(list(service_objects))
     Gtk.main()
 

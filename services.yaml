@@ -5,10 +5,13 @@
 - name: Something
   address: 192.168.0.211
   port: 80
+  refresh_timeout: 5
+  refresh_interval: 10
 
 - name: Charon
   address: 127.0.0.1
   port: 5000  
+  refresh_interval: 15
 
 - name: DuckDuckGo
   address: duckduckgo.com
