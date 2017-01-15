@@ -3,7 +3,7 @@ font_size: 14
 
 refresh_interval: 1
 refresh_timeout: 10
-flapping_protection_interval: 60
+flapping_detection_interval: 60
 
 title:       Services
 label_ok:    Available
@@ -17,6 +17,7 @@ edge_y_offset: 50
 
 notification_title: Status change in %s
 notification_text:  The service is now %s
+notification_timeout: ~
 
 background_rgba:
     red:   0.0

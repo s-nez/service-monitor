@@ -10,8 +10,9 @@ from Service import Service
 from Monitor import Monitor
 
 FIELDS_WITH_GLOBALS = [
-    'refresh_interval',   'refresh_timeout', 'flapping_protection_interval',
-    'notification_title', 'notification_text', 'label_ok', 'label_error'
+    'refresh_interval',   'refresh_timeout', 'flapping_detection_interval',
+    'notification_title', 'notification_text', 'notification_timeout',
+    'label_ok', 'label_error'
 ]
 
 def main():
