@@ -2,7 +2,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from sys import argv
+from sys import argv, exit
 import signal
 import yaml
 
@@ -21,6 +21,10 @@ def main():
         if 'refresh_timeout' not in service:
             service['refresh_timeout'] = config['refresh_timeout']
         service_objects.append(Service(**service))
+
+    if len(config['services']) == 0:
+        print('No services found')
+        exit()
 
     app = Monitor(service_objects, config)
     Gtk.main()

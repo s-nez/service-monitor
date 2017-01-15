@@ -11,6 +11,7 @@ class Service(object):
         self.refresh_interval = kwargs['refresh_interval']
         self.refresh_timeout  = kwargs['refresh_timeout']
 
+        self._status_timestamps = { 'ERROR': None, 'OK': None }
         self._thread = Thread(target = self.refresh_status)
         self._thread.start()
 

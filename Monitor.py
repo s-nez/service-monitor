@@ -104,6 +104,11 @@ class Monitor(Gtk.Window):
             grid.attach(name_label, 1, row, 1, 1)
             grid.attach(status_label, 2, row, 1, 1)
 
+        # FIXME: determine proper spinner width
+        # get_allocated_width only works properly after the widget is shown
+        spinner_width = 16 
+        grid.set_margin_right(spinner_width)
+
         self._service_grid = grid
         self.update_status_indicators()
 
@@ -124,7 +129,7 @@ class Monitor(Gtk.Window):
         root_width, root_height = root_win.get_width(), root_win.get_height()
         x_offset, y_offset = \
             self._settings['edge_x_offset'], self._settings['edge_y_offset']
-        self.move(root_width - self_width - x_offset - 110,
+        self.move(root_width - self_width - x_offset - spinner_width - 110,
                 root_height - self_height - y_offset)
 
         self.connect('delete-event', Gtk.main_quit)
