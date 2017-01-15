@@ -1,18 +1,35 @@
-- name: Router admin panel
-  address: 192.168.0.1
-  port: 80
+font_name: Liberation Mono
+font_size: 14
 
-- name: Something
-  address: 192.168.0.211
-  port: 80
-  refresh_timeout: 5
-  refresh_interval: 10
+refresh_interval: 5
+refresh_timeout: 10
 
-- name: Charon
-  address: 127.0.0.1
-  port: 5000  
-  refresh_interval: 15
+title:       Services
+label_ok:    Available
+label_error: Unavailable
+color_ok:    green
+color_error: red
 
-- name: DuckDuckGo
-  address: duckduckgo.com
-  port: 80
+window_gravity: bottom_right
+edge_x_offset: 10
+edge_y_offset: 50
+
+services:
+    - name: Router admin panel
+      address: 192.168.0.1
+      port: 80
+
+    - name: Something
+      address: 192.168.0.211
+      port: 80
+      refresh_timeout: 5
+      refresh_interval: 10
+
+    - name: Charon
+      address: 127.0.0.1
+      port: 5000  
+      refresh_interval: 15
+
+    - name: DuckDuckGo
+      address: duckduckgo.com
+      port: 80

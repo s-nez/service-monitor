@@ -7,26 +7,49 @@ import math
 
 from SimpleLabel import SimpleLabel
 
-PADDING         = 10
-EDGE_X_OFFSET   = 10
-EDGE_Y_OFFSET   = 50
-ICON_SIZE       = Gtk.IconSize.LARGE_TOOLBAR
-REFRESH_TIMEOUT = 1000
-TITLE           = 'Services'
-FONT_NAME = 'Liberation Mono'
-FONT_SIZE = 14
+DEFAULT_SETTINGS = {
+    'window_gravity': 'bottom_right',
+    'edge_x_offset': 10,
+    'edge_y_offset': 50,
 
-FIXED_ROWS = 1
+    'font_name': 'Liberation Mono',
+    'font_size': 14,
 
-STATUS_LABELS = {
-    'OK':    ('available',  'green'),
-    'ERROR': ('unavailable', 'red')
+    'title':       'Services',
+    'label_ok':    'available',
+    'label_error': 'unavailable',
+    'color_ok':    'green',
+    'color_error': 'red'
 }
 
+WINDOW_GRAVITIES = {
+    'top_left':     Gdk.Gravity.NORTH_WEST,
+    'top_right':    Gdk.Gravity.NORTH_EAST,
+    'bottom_right': Gdk.Gravity.SOUTH_EAST,
+    'bottom_left':  Gdk.Gravity.SOUTH_WEST
+}
+
+PADDING         = 10
+ICON_SIZE       = Gtk.IconSize.LARGE_TOOLBAR
+REFRESH_TIMEOUT = 1000
+FIXED_ROWS = 1  # FIXME: hack
+
 class Monitor(Gtk.Window):
-    def __init__(self, services):
+    def __init__(self, services, settings):
         super(Monitor, self).__init__()
         self._services = services
+
+        self._settings = settings
+        for setting, value in DEFAULT_SETTINGS.items():
+            if setting not in self._settings:
+                self._settings[setting] = value
+        self._settings['window_gravity'] = \
+            WINDOW_GRAVITIES[self._settings['window_gravity']]
+        self._font_description = self._settings['font_name'] \
+            + ' ' + str(self._settings['font_size'])
+
+        print('Got settings:', str(self._settings))
+
         self.setup()
         self.init_ui()
         GObject.timeout_add(REFRESH_TIMEOUT, self.update_status_indicators)
@@ -45,19 +68,20 @@ class Monitor(Gtk.Window):
     def init_ui(self):
         self.connect('draw', self.on_draw)
 
-
         grid = Gtk.Grid()
         grid.set_column_spacing(5)
         grid.set_border_width(5)
 
-        title_label = SimpleLabel(TITLE, 'white', 0.5)
+        font = self._font_description
+
+        title_label = SimpleLabel(self._settings['title'], 'white', 0.5, font)
         title_label.set_margin_bottom(15)
         grid.attach(title_label, 1, 0, 3, 1)
 
         for row, service in enumerate(self._services):
             row += FIXED_ROWS  # FIXME: hack
-            name_label   = SimpleLabel(service.name, 'white', 0)
-            status_label = SimpleLabel('...', 'white', 1)
+            name_label   = SimpleLabel(service.name, 'white', 0, font)
+            status_label = SimpleLabel('...', 'white', 1, font)
 
             spinner = Gtk.Spinner()
             spinner.start()
@@ -73,20 +97,21 @@ class Monitor(Gtk.Window):
         frame.add(grid)
         self.add(frame)
 
-        required_height = len(self._services) * (FONT_SIZE + PADDING)
-        required_width  = (
-            max(map(lambda x: len(x.name), self._services))
-            + max(map(lambda x: len(x[0]), STATUS_LABELS.values()))
-        ) * FONT_SIZE - 45 # FIXME: hack
+        font_size = self._settings['font_size']
+        required_height = len(self._services) * (font_size + PADDING)
+        required_width  = max(
+            [self._max_len_service_name(), self._max_len_status_label()]
+            ) * font_size;
         self.resize(required_width, required_height)
 
-        # Position the window in the lower right corner of the screen
-        self.set_gravity(Gdk.Gravity.SOUTH_EAST)
+        self.set_gravity(self._settings['window_gravity'])
         self_width, self_height = self.get_size()
         root_win = Gdk.get_default_root_window()
         root_width, root_height = root_win.get_width(), root_win.get_height()
-        self.move(root_width - self_width - EDGE_X_OFFSET,
-                root_height - self_height - EDGE_Y_OFFSET)
+        x_offset, y_offset = \
+            self._settings['edge_x_offset'], self._settings['edge_y_offset']
+        self.move(root_width - self_width - x_offset - 110,
+                root_height - self_height - y_offset)
 
         self.connect('delete-event', Gtk.main_quit)
         self.show_all()
@@ -102,13 +127,25 @@ class Monitor(Gtk.Window):
         for row, service in enumerate(self._services):
             row += FIXED_ROWS  # FIXME: hack
             spinner = self._service_grid.get_child_at(0, row)
-            if service.status != 'REFRESH':
+            if service.status == 'OK':
                 spinner.stop()
                 label = self._service_grid.get_child_at(2, row)
-                label_desc = STATUS_LABELS[service.status]
-                label.set_text(label_desc[0])
-                label.set_text_color(label_desc[1])
+                label.set_text(self._settings['label_ok'])
+                label.set_text_color(self._settings['color_ok'])
+            elif service.status == 'ERROR':
+                spinner.stop()
+                label = self._service_grid.get_child_at(2, row)
+                label.set_text(self._settings['label_error'])
+                label.set_text_color(self._settings['color_error'])
             else:
                 spinner.start()
 
         return True
+
+    def _max_len_service_name(self):
+        return max(map(lambda x: len(x.name), self._services))
+
+    def _max_len_status_label(self):
+        return max(map(lambda x: len(x),
+            [ self._settings['label_ok'], self._settings['label_error'] ]))
+

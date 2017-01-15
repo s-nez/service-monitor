@@ -11,11 +11,18 @@ from Monitor import Monitor
 
 def main():
     fh_services = open(argv[1])
-    services    = yaml.safe_load(fh_services)
+    config = yaml.safe_load(fh_services)
     fh_services.close()
 
-    service_objects = map( lambda x: Service(**x), services)
-    app = Monitor(list(service_objects))
+    service_objects = []
+    for service in config['services']:
+        if 'refresh_interval' not in service:
+            service['refresh_interval'] = config['refresh_interval']
+        if 'refresh_timeout' not in service:
+            service['refresh_timeout'] = config['refresh_timeout']
+        service_objects.append(Service(**service))
+
+    app = Monitor(service_objects, config)
     Gtk.main()
 
 if __name__ == '__main__':
